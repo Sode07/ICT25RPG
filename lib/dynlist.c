@@ -2,18 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "dynlist.h"
+
 #define MAX_LENGTH 1024
-
-#ifdef __cplusplus
-extern "C"
-#endif
-
-typedef struct {
-  void** mem;
-  size_t tlen;
-  size_t clen;
-  size_t unitsize;
-} DynList;
 
 int dyn_push(DynList* list, void* ptr)
 {

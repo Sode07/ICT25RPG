@@ -5,17 +5,7 @@
 
 #include "magic.h"
 #include "dynlist.h"
-
-#ifdef __cplusplus
-extern "C"
-#endif
-
-#define SPRITE_QUEUE_MAX_LENGTH 1024
-
-typedef struct {
-	SDL_Texture* Texture;
-	SDL_Rect Transform;
-} Sprite;
+#include "sprite.h"
 
 /* BEGIN PRIVATE GLOBALS */
 

@@ -16,6 +16,10 @@
 #ifndef h_sprite_h
 #define h_sprite_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
 	SDL_Texture* Texture;
 	SDL_Rect Transform;
@@ -41,5 +45,9 @@ void render_all(const Application* App);
 
 /* Debug function for listing valid sprite pointers */
 void list_loaded_sprites();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

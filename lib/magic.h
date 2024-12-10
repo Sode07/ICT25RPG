@@ -7,6 +7,10 @@
 #ifndef h_magic_h
 #define h_magic_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
 SDL_Window* Window;
 	SDL_Renderer* Renderer;
@@ -33,5 +37,11 @@ char* get_error();
 
 /* Hides function calls to renderer */
 void display_update(const Application* App);
+
+void update_delta_time();
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

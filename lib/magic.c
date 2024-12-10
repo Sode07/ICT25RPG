@@ -1,3 +1,6 @@
+#include <SDL2/SDL_stdinc.h>
+#include <SDL2/SDL_timer.h>
+#include <SDL2/SDL_video.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -10,11 +13,9 @@
 /* BEGIN PRIVATE GLOBALS */
 
 static char* errorstr;
+extern float delta_time;
 
 /* END PRIVATE GLOBALS */
-
-/* ---- BEGIN PRIVATE FUNCTIONS ---- */
-/* ---- END PRIVATE FUNCTIONS ---- */
 
 /* ---- BEGIN PUBLIC FUNCTIONS ---- */
 
@@ -30,10 +31,17 @@ ApplicationInitStatus init_application(Application** outApp, int window_width, i
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) return APP_VIDEO_SUBSYSTEM_FAIL;
 	
-	(*outApp)->Window = SDL_CreateWindow("jai", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window_width, window_height, SDL_WINDOW_SHOWN);
+	(*outApp)->Window = SDL_CreateWindow(
+    "jai",
+    SDL_WINDOWPOS_CENTERED,
+    SDL_WINDOWPOS_CENTERED,
+    window_width,
+    window_height,
+    SDL_WINDOW_SHOWN
+  );
 	if (!(*outApp)->Window) return APP_WINDOW_CREATION_FAIL;
 
-	(*outApp)->Renderer = SDL_CreateRenderer((*outApp)->Window, 0, SDL_RENDERER_PRESENTVSYNC);
+	(*outApp)->Renderer = SDL_CreateRenderer((*outApp)->Window, 0, SDL_RENDERER_ACCELERATED);
 	if (!(*outApp)->Renderer) return APP_RENDERER_CREATION_FAIL;
 
 	(*outApp)->width = window_width;
@@ -61,6 +69,14 @@ void display_update(const Application* App)
     render_all(App);
     SDL_RenderPresent(App->Renderer);
   }
+}
+
+void update_delta_time()
+{
+  static Uint32 PreviousFrame = 0;
+  Uint32 CurrentFrame = SDL_GetTicks();
+  delta_time = (CurrentFrame - PreviousFrame) * 0.001;
+  PreviousFrame = CurrentFrame;
 }
 
 /* ---- BEGIN PUBLIC FUNCTIONS ---- */

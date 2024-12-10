@@ -14,6 +14,10 @@
 #ifndef h_dynlist_h
 #define h_dynlist_h
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
   void** mem;
   size_t tlen;
@@ -36,5 +40,9 @@ int dyn_rem(DynList* list, void* ptr);
 /* Deletes the whole dynlist from memory */
 /* Vois olla DynList** */
 void dyn_free(DynList* list);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
