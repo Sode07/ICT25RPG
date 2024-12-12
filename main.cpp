@@ -7,6 +7,7 @@
 #include "lib/magic.h"
 #include "lib/sprite.h"
 #include "lib/control.h"
+#include "lib/asym.h"
 
 #include "game.h"
 
@@ -26,6 +27,9 @@ int main(int argc, char **argv)
   if (init_sprite_queue(10) != 0) return 2;
   if (game_init(sWindow) != 0) return 3;
 
+  AsymTileMap* atilemap = load_asym_tilemap(sWindow);
+  if (!atilemap) return 4;
+
   // Main activity loop
   while (true)
   {
@@ -36,7 +40,8 @@ int main(int argc, char **argv)
     game_tick(delta_time);
 
     if (CurrentEvent.type == SDL_QUIT) break;
- 
+    
+    draw_asym_tilemap(sWindow, atilemap);
     display_update(sWindow);
     if (next_frame_in > 0)
     {
