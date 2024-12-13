@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include "magic.h"
+
 #ifndef h_magic_h
 #define h_magic_h
 
@@ -34,9 +36,6 @@ void destroy_application (Application* App);
 
 /* No comment */
 char* get_error();
-
-/* Hides function calls to renderer */
-void display_update(const Application* App);
 
 void update_delta_time();
 

@@ -20,6 +20,17 @@ extern SDL_Event CurrentEvent;
 float delta_time = 0;
 int next_frame_in = 0;
 
+void display_update(const AsymTileMap* Tilemap)
+{
+  if (sWindow)
+  {
+    SDL_RenderClear(sWindow->Renderer);
+    draw_asym_tilemap(sWindow, Tilemap);
+    render_all(sWindow);
+    SDL_RenderPresent(sWindow->Renderer);
+  }
+}
+
 int main(int argc, char **argv)
 {
   // Initialize components
@@ -42,14 +53,13 @@ int main(int argc, char **argv)
     if (CurrentEvent.type == SDL_QUIT) break;
     
     draw_asym_tilemap(sWindow, atilemap);
-    display_update(sWindow);
+    display_update(atilemap);
     if (next_frame_in > 0)
     {
       SDL_Delay(next_frame_in);
     }
   }
 
-  game_cleanup();
   destroy_application(sWindow);
   return 0;
 }

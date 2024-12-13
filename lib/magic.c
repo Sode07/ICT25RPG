@@ -9,6 +9,7 @@
 
 #include "magic.h"
 #include "sprite.h"
+#include "asym.h"
 
 /* BEGIN PRIVATE GLOBALS */
 
@@ -59,16 +60,6 @@ void destroy_application (Application* App)
 		free(App);
 		App = NULL;
 	}
-}
-
-void display_update(const Application* App)
-{
-  if (App)
-  {
-    SDL_RenderClear(App->Renderer);
-    render_all(App);
-    SDL_RenderPresent(App->Renderer);
-  }
 }
 
 void update_delta_time()
