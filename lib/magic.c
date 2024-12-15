@@ -9,7 +9,6 @@
 
 #include "magic.h"
 #include "sprite.h"
-#include "asym.h"
 
 /* BEGIN PRIVATE GLOBALS */
 

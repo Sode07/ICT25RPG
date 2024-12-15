@@ -6,6 +6,8 @@
 #include "lib/control.h"
 
 Sprite* chocobo;
+extern int offsetx;
+extern int offsety;
 
 int game_init(const Application* App)
 {
@@ -20,9 +22,8 @@ void game_tick(float delta_time)
   SDL_Rect* tf = &chocobo->Transform;
 
   get_movement_vec(&vx, &vy);
-  tf->x += 600 * vx * delta_time;
-  tf->y += 600 * vy * delta_time;
-  printf("vx: %i, vy: %i\n", vx, vy);
+  offsetx += -1 * 600 * vx * delta_time;
+  offsety += -1 * 600 * vy * delta_time;
 }
 
 void game_cleanup()

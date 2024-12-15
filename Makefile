@@ -5,7 +5,7 @@ COMPILER_FLAGS := -Wall -ggdb
 LINKER_FLAGS := -l SDL2
 
 MAINOBJ := $(BUILD_PATH)main.o
-LIBOBJS := $(LIBOBJ_PATH)dynlist.o $(LIBOBJ_PATH)magic.o $(LIBOBJ_PATH)sprite.o $(LIBOBJ_PATH)control.o $(LIBOBJ_PATH)asym.o
+LIBOBJS := $(LIBOBJ_PATH)dynlist.o $(LIBOBJ_PATH)magic.o $(LIBOBJ_PATH)sprite.o $(LIBOBJ_PATH)control.o $(LIBOBJ_PATH)isomap.o
 
 .PHONY: all clean distclean
 
