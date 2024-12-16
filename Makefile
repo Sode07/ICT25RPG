@@ -2,7 +2,7 @@ BUILD_PATH := build/
 LIBOBJ_PATH = $(BUILD_PATH)lib/
 
 COMPILER_FLAGS := -Wall -ggdb
-LINKER_FLAGS := -l SDL2
+LINKER_FLAGS := -lSDL2
 
 MAINOBJ := $(BUILD_PATH)main.o
 LIBOBJS := $(LIBOBJ_PATH)dynlist.o $(LIBOBJ_PATH)magic.o $(LIBOBJ_PATH)sprite.o $(LIBOBJ_PATH)control.o $(LIBOBJ_PATH)isomap.o
