@@ -5,8 +5,8 @@
 #include "magic.h"
 #include "isomap.h"
 
-#define MAPW 3
-#define MAPH 3
+#define MAPW 7
+#define MAPH 5
 #define MAPD 3
 
 const int tile_width = 32;
@@ -21,26 +21,39 @@ SDL_Texture* tileset;
 Uint8 testmap[MAPD][MAPH][MAPW] =
 {
   {
-    {0, 0, 0},
-    {0, 1, 0},
-    {0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 1, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0},
   },
   {
-    {0, 0, 0},
-    {1, 1, 1},
-    {0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0},
+    {1, 1, 1, 0, 0, 0, 0},
+    {0, 0, 0, 1, 0, 0, 0},
+    {0, 0, 0, 1, 0, 0, 0},
+    {0, 0, 0, 1, 0, 0, 0},
   },
   {
-    {0, 0, 0},
-    {0, 1, 0},
-    {0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0},
+    {0, 1, 0, 0, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0},
+    {0, 0, 0, 1, 0, 0, 0},
+    {0, 0, 0, 0, 0, 0, 0},
   }
 };
 
-static void get_iso_coords(int x, int y, int z, int* outX, int* outY)
+static void get_iso_coords(int gx, int gy, int gz, int* outX, int* outY)
 {
-  if (outX) *outX = offsetx + ((x * tile_width / 2) + (y * tile_width / 2)) * rendering_scale;
-  if (outY) *outY = offsety + ((y * tile_height / 4) - (z * tile_height / 2) - (x * tile_height / 4)) * rendering_scale;
+  if (outX) *outX = offsetx + ((gx * tile_width / 2) + (gy * tile_width / 2)) * rendering_scale;
+  if (outY) *outY = offsety + ((gy * tile_height / 4) - (gz * tile_height / 2) - (gx * tile_height / 4)) * rendering_scale;
+}
+
+static void convert_screenspace_into_isog(int x, int y, int* outX, int* outY, int* outZ)
+{
+  if (outX) *outX = (x + offsetx) / tile_width * rendering_scale;
+  if (outY) return;
+  if (outZ) return;
 }
 
 int load_tileset(const Application* App)
@@ -67,8 +80,16 @@ void draw_tilemap(const Application* App)
 
         srcslice = (SDL_Rect){0, 0, tile_width, tile_height};
         get_iso_coords(xcell, ycell, zcell, &destblt.x, &destblt.y);
-        SDL_RenderCopy(App->Renderer, tileset, &srcslice, &destblt);
+        if(
+            destblt.x > 0 - tile_width * rendering_scale && destblt.x < App->width &&
+            destblt.y > 0 - tile_height * rendering_scale && destblt.y < App->height
+          ) SDL_RenderCopy(App->Renderer, tileset, &srcslice, &destblt);
       }
     }
   }
+}
+
+Uint8 get_tiledata_at(int x, int y)
+{
+
 }

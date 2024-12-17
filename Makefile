@@ -10,7 +10,7 @@ LIBOBJS := $(LIBOBJ_PATH)dynlist.o $(LIBOBJ_PATH)magic.o $(LIBOBJ_PATH)sprite.o 
 .PHONY: all clean distclean
 
 game: $(MAINOBJ) $(LIBOBJS)
-	gcc $(COMPILER_FLAGS) $(shell sdl2-config --cflags --libs) $? -o $@
+	gcc $(COMPILER_FLAGS) $(shell sdl2-config --cflags --libs) $(MAINOBJ) $(LIBOBJS) -o $@
 
 $(BUILD_PATH)%.o: %.cpp
 	gcc $(COMPILER_FLAGS) -c $? -o $@
