@@ -10,16 +10,16 @@ LIBOBJS := $(LIBOBJ_PATH)dynlist.o $(LIBOBJ_PATH)magic.o $(LIBOBJ_PATH)sprite.o 
 .PHONY: all clean distclean
 
 game: $(MAINOBJ) $(LIBOBJS) $(BUILD_PATH)game.o
-	gcc $(COMPILER_FLAGS) $(LINKER_FLAGS) $(wildcard $(BUILD_PATH)*.o) $(LIBOBJS) -o $@.o
+	gcc $(COMPILER_FLAGS) $(shell sdl2-config --cflags --libs) $(wildcard $(BUILD_PATH)*.o) $(LIBOBJS) -o $@.o
 
 $(MAINOBJ): main.cpp
-	gcc $(COMPILER_FLAGS) $(LINKER_FLAGS) -c $? -o $@
+	gcc $(COMPILER_FLAGS) -c $? -o $@
 
 $(BUILD_PATH)game.o: game.cpp
-	gcc $(COMPILER_FLAGS) $(LINKER_FLAGS) -c $? -o $@
+	gcc $(COMPILER_FLAGS) -c $? -o $@
 
 $(LIBOBJ_PATH)%.o: lib/%.c
-	gcc $(COMPILER_FLAGS) $(LINKER_FLAGS) -c $? -o $@
+	gcc $(COMPILER_FLAGS) -c $? -o $@
 
 clean:
 	$(RM) $(wildcard $(BUILD_PATH)*.o)
