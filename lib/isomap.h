@@ -20,6 +20,8 @@ int load_tileset(const Application* App);
 
 void draw_tilemap(const Application* App);
 
+void draw_debug_cursor();
+
 #ifdef __cplusplus
 }
 #endif

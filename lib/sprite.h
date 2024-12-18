@@ -1,9 +1,5 @@
 #pragma once
 
-#include <SDL2/SDL.h>
-
-#include "magic.h"
-
 /*
  * The Laatu sprite system ver. 1.02
  *
@@ -16,14 +12,20 @@
 #ifndef h_sprite_h
 #define h_sprite_h
 
+#include <SDL2/SDL.h>
+
+#include "magic.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 typedef struct {
 	SDL_Texture* Texture;
 	SDL_Rect Transform;
 } Sprite;
+
 
 /* Allocates heap memory to store the sprites. Must be called before any sprites are loaded. */
 int init_sprite_queue(size_t length);

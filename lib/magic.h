@@ -28,6 +28,8 @@ typedef enum {
  APP_UNKNOWN = 4,
 } ApplicationInitStatus;
 
+extern Application* sWindow;
+
 /* Wrapper function for window creation. */
 ApplicationInitStatus init_application(Application** outApp, int window_width, int window_height);
 

@@ -3,6 +3,8 @@
 #ifndef h_control_h
 #define h_control_h
 
+#include "magic.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

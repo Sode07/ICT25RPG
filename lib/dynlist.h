@@ -14,6 +14,8 @@
 #ifndef h_dynlist_h
 #define h_dynlist_h
 
+#include "magic.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif

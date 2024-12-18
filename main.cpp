@@ -26,6 +26,7 @@ void display_update()
     SDL_RenderClear(sWindow->Renderer);
     render_all(sWindow);
     draw_tilemap(sWindow);
+    draw_debug_cursor();
     SDL_RenderPresent(sWindow->Renderer);
   }
 }

@@ -1,3 +1,4 @@
+#include <SDL2/SDL_mouse.h>
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_surface.h>
@@ -7,7 +8,7 @@
 
 #define MAPW 7
 #define MAPH 5
-#define MAPD 3
+#define MAPD 1
 
 const int tile_width = 32;
 const int tile_height = 32;
@@ -22,25 +23,11 @@ Uint8 testmap[MAPD][MAPH][MAPW] =
 {
   {
     {0, 0, 0, 0, 0, 0, 0},
-    {0, 1, 0, 0, 0, 0, 0},
+    {0, 1, 1, 1, 0, 0, 0},
+    {0, 1, 0, 1, 0, 0, 0},
+    {0, 1, 1, 1, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 1, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0},
-  },
-  {
-    {0, 0, 0, 0, 0, 0, 0},
-    {1, 1, 1, 0, 0, 0, 0},
-    {0, 0, 0, 1, 0, 0, 0},
-    {0, 0, 0, 1, 0, 0, 0},
-    {0, 0, 0, 1, 0, 0, 0},
-  },
-  {
-    {0, 0, 0, 0, 0, 0, 0},
-    {0, 1, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 1, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0},
-  }
+  }, 
 };
 
 static void get_iso_coords(int gx, int gy, int gz, int* outX, int* outY)
@@ -51,9 +38,24 @@ static void get_iso_coords(int gx, int gy, int gz, int* outX, int* outY)
 
 static void convert_screenspace_into_isog(int x, int y, int* outX, int* outY, int* outZ)
 {
-  if (outX) *outX = (x + offsetx) / tile_width * rendering_scale;
-  if (outY) return;
+  if (outX) *outX = (x + offsetx) / (tile_width * rendering_scale);
+  if (outY) *outY = (y + offsety) / (tile_width * rendering_scale);
   if (outZ) return;
+}
+
+void draw_debug_cursor()
+{
+  int screenx;
+  int screeny;
+  SDL_Rect dCursor = {0, 0, tile_width * rendering_scale, tile_height * rendering_scale};
+
+  SDL_GetMouseState(&screenx, &screeny);
+  dCursor.x = (screenx - tile_width) / tile_width / 2 * tile_width + offsetx % tile_width;
+  dCursor.y = (screeny - tile_height / 2) / tile_height / 2 * tile_height + offsety % tile_height;
+  
+  SDL_SetRenderDrawColor(sWindow->Renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+  if (SDL_RenderDrawRect(sWindow->Renderer, &dCursor) < 0) puts(SDL_GetError());
+  SDL_SetRenderDrawColor(sWindow->Renderer, 0x00, 0x00, 0x00, 0x00);
 }
 
 int load_tileset(const Application* App)
@@ -89,7 +91,4 @@ void draw_tilemap(const Application* App)
   }
 }
 
-Uint8 get_tiledata_at(int x, int y)
-{
 
-}
