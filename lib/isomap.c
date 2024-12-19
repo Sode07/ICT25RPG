@@ -43,15 +43,15 @@ static void convert_screenspace_into_isog(int x, int y, int* outX, int* outY, in
   if (outZ) return;
 }
 
-void draw_debug_cursor()
+void draw_debug_cursor() // TODO: Optimisoi tää
 {
   int screenx;
   int screeny;
   SDL_Rect dCursor = {0, 0, tile_width * rendering_scale, tile_height * rendering_scale};
 
   SDL_GetMouseState(&screenx, &screeny);
-  dCursor.x = (screenx - tile_width) / tile_width / 2 * tile_width + offsetx % tile_width;
-  dCursor.y = (screeny - tile_height / 2) / tile_height / 2 * tile_height + offsety % tile_height;
+  dCursor.x = (screenx - tile_width / 2) / (tile_width) * tile_width + offsetx % tile_width;
+  dCursor.y = (screeny - tile_height / 2) / (tile_height / 2) * (tile_height / 2) + offsety % tile_height;
   
   SDL_SetRenderDrawColor(sWindow->Renderer, 0xFF, 0xFF, 0xFF, 0xFF);
   if (SDL_RenderDrawRect(sWindow->Renderer, &dCursor) < 0) puts(SDL_GetError());
