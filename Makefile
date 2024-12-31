@@ -1,18 +1,21 @@
-BUILD_PATH = build/
+BUILD_PATH := build/
 LIBOBJ_PATH = $(BUILD_PATH)lib/
 
 COMPILER_FLAGS := -Wall -ggdb
 LINKER_FLAGS := -lSDL2
 
-MAINOBJ := $(BUILD_PATH)main.o $(BUILD_PATH)game.o
+MAINOBJ := $(BUILD_PATH)main.o
 LIBOBJS := $(LIBOBJ_PATH)dynlist.o $(LIBOBJ_PATH)magic.o $(LIBOBJ_PATH)sprite.o $(LIBOBJ_PATH)control.o $(LIBOBJ_PATH)isomap.o
 
 .PHONY: all clean distclean
 
-game: $(MAINOBJ) $(LIBOBJS)
-	gcc $(COMPILER_FLAGS) $(shell sdl2-config --cflags --libs) $(MAINOBJ) $(LIBOBJS) -o $@
+game: $(MAINOBJ) $(LIBOBJS) $(BUILD_PATH)game.o
+	gcc $(COMPILER_FLAGS) $(shell sdl2-config --cflags --libs) $(wildcard $(BUILD_PATH)*.o) $(LIBOBJS) -o $@.o
 
-$(BUILD_PATH)%.o: %.cpp
+$(MAINOBJ): main.cpp
+	gcc $(COMPILER_FLAGS) -c $? -o $@
+
+$(BUILD_PATH)game.o: game.cpp
 	gcc $(COMPILER_FLAGS) -c $? -o $@
 
 $(LIBOBJ_PATH)%.o: lib/%.c

@@ -18,7 +18,7 @@ typedef struct {
 
 int load_tileset(const Application* App);
 
-void draw_tilemap(const Application* App);
+void draw_tilemap(const Application* App, const char *mapname);
 
 void draw_debug_cursor();
 
