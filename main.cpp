@@ -10,8 +10,8 @@
 
 #include "game.h"
 
-const int wWidth = 640;
-const int wHeight = 480;
+const int wWidth = 1920;
+const int wHeight = 1080;
 
 Application* sWindow;
 extern SDL_Event CurrentEvent;
@@ -25,7 +25,7 @@ void display_update()
   {
     SDL_RenderClear(sWindow->Renderer);
     render_all(sWindow);
-    draw_tilemap(sWindow,"testmap");
+    draw_tilemap(sWindow,"1kerros");
     draw_debug_cursor();
     SDL_RenderPresent(sWindow->Renderer);
   }
