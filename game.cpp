@@ -5,14 +5,18 @@
 #include "lib/sprite.h"
 #include "lib/control.h"
 #include "lib/isomap.h"
+#include "lib/pos.h"
 
 Sprite* chocobo;
 extern int offsetx;
 extern int offsety;
 
+int playerx = 0;
+int playery = 0;
+
 int game_init(const Application* App)
 {
-  chocobo = load_sprite(App, "res/chocobo.bmp", (SDL_Rect){0, 0, 100, 100});
+  chocobo = load_sprite(App, "res/sprites/pelaaja.bmp", (SDL_Rect){playerx, playery, 16*2, 32*2});
   if (!chocobo) return -1;
   return 0;
 }

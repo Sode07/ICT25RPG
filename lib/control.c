@@ -20,7 +20,9 @@ void update_events()
 {
   SDL_PumpEvents(); 
   keyboard = SDL_GetKeyboardState(NULL);
-
+  if (CurrentEvent.type == SDL_MOUSEBUTTONDOWN) {
+    printf("Mouse button down at (%d, %d)\n", CurrentEvent.button.x, CurrentEvent.button.y);
+  }
   if (keyboard[41]) CurrentEvent.type = SDL_QUIT;
   cx = -keyboard[leftkey] + keyboard[rightkey];
   cy = -keyboard[upkey] + keyboard[downkey];

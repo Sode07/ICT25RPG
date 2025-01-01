@@ -16,8 +16,6 @@ int offsety = 100;
 const int rendering_scale = 2;
 SDL_Texture* tileset;
 
-
-
 typedef unsigned char Uint8;
 //Rehel en oo iha varma mitä nää kaikki rivit tekee mut se toimii
 void loadMapFromFile(const char *filename, Uint8 ***map, int *MAPH, int *MAPW) {
@@ -56,6 +54,7 @@ void loadMapFromFile(const char *filename, Uint8 ***map, int *MAPH, int *MAPW) {
 
     fclose(file);
 }
+
 static void get_iso_coords(int gx, int gy, int gz, int* outX, int* outY)
 {
   if (outX) *outX = offsetx + ((gx * tile_width / 2) + (gy * tile_width / 2)) * rendering_scale;
@@ -71,19 +70,19 @@ static void convert_screenspace_into_isog(int x, int y, int* outX, int* outY, in
 
 void draw_debug_cursor() // TODO: Optimisoi tää
 {
-  int screenx;
-  int screeny;
-  SDL_Rect dCursor = {0, 0, tile_width * rendering_scale, tile_height * rendering_scale};
+    int screenx;
+    int screeny;
+    SDL_Rect dCursor = {0, 0, tile_width/2 * rendering_scale, tile_height * rendering_scale};
 
-  SDL_GetMouseState(&screenx, &screeny);
-  dCursor.x = (screenx - tile_width / 2) / tile_width * tile_width + offsetx % tile_width;
-  dCursor.y = (screeny - tile_height / 2) / (tile_height / 2) * (tile_height / 2) + offsety % tile_height;
-  
-  //printf("cx: %i, cy: %i\n", (screenx - tile_width / 2) / tile_width - offsetx / tile_width, (screeny - tile_height / 2) / (tile_height / 2) - offsety / tile_height);
+    SDL_GetMouseState(&screenx, &screeny);
+    dCursor.x = (screenx - tile_width / 2) / tile_width * tile_width + offsetx % tile_width+tile_width/2;
+    dCursor.y = (screeny - tile_height / 2) / (tile_height / 2) * (tile_height / 2) + offsety % tile_height;
 
-  SDL_SetRenderDrawColor(sWindow->Renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-  if (SDL_RenderDrawRect(sWindow->Renderer, &dCursor) < 0) puts(SDL_GetError());
-  SDL_SetRenderDrawColor(sWindow->Renderer, 0x00, 0x00, 0x00, 0x00);
+    //printf("cx: %i, cy: %i\n", (screenx - tile_width / 2) / tile_width - offsetx / tile_width, (screeny - tile_height / 2) / (tile_height / 2) - offsety / tile_height);
+
+    SDL_SetRenderDrawColor(sWindow->Renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    if (SDL_RenderDrawRect(sWindow->Renderer, &dCursor) < 0) puts(SDL_GetError());
+    SDL_SetRenderDrawColor(sWindow->Renderer, 0x00, 0x00, 0x00, 0x00);
 }
 
 int load_tileset(const Application* App)
@@ -123,5 +122,3 @@ void draw_tilemap(const Application* App, const char *mapname) {
         }
     }
 }
-
-
