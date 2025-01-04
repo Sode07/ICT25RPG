@@ -5,8 +5,6 @@
 #include "magic.h"
 #include "isomap.h"
 
-#define MAPD 1
-
 const int tile_width = 32;
 const int tile_height = 32;
 
@@ -14,11 +12,14 @@ int offsetx = 200;
 int offsety = 100;
 
 const int rendering_scale = 2;
-SDL_Texture* tileset;
+//tää o tosi getto ratkasu ja joudutaa lisää näit joka tilee mu onneks jokases o yläpuoli ja sivu eli yks o kaks eri tekstuurii
+SDL_Texture* tileset1;
+SDL_Texture* tileset2;
+SDL_Texture* tileset3;
 
 typedef unsigned char Uint8;
 //Rehel en oo iha varma mitä nää kaikki rivit tekee mut se toimii
-void loadMapFromFile(const char *filename, Uint8 ***map, int *MAPH, int *MAPW) {
+void loadMapFromFile(const char *filename, Uint8 ****map, int *MAPH, int *MAPW, int *MAPD) {
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         perror("Error opening file");
@@ -28,25 +29,30 @@ void loadMapFromFile(const char *filename, Uint8 ***map, int *MAPH, int *MAPW) {
     char line[256];
     char name[256];
 
-    // Katotaa leveys korkeus ja nimi
+    // Read width, height, depth, and name
     if (fgets(line, sizeof(line), file) != NULL) {
-        sscanf(line, ",w%d,h%d,\"%[^\"]\",", MAPW, MAPH, name);
+        sscanf(line, ",w%d,h%d,d%d,\"%[^\"]\",", MAPW, MAPH, MAPD, name);
     }
 
-    // Pistetää muistii (toivottavasti tää riittää also en koskaa free tätä)
-    *map = (Uint8 **)malloc(*MAPH * sizeof(Uint8 *));
-    for (int h = 0; h < *MAPH; h++) {
-        (*map)[h] = (Uint8 *)malloc(*MAPW * sizeof(Uint8));
+    // Allocate memory for the map
+    *map = (Uint8 ***)malloc(*MAPD * sizeof(Uint8 **));
+    for (int d = 0; d < *MAPD; d++) {
+        (*map)[d] = (Uint8 **)malloc(*MAPH * sizeof(Uint8 *));
+        for (int h = 0; h < *MAPH; h++) {
+            (*map)[d][h] = (Uint8 *)malloc(*MAPW * sizeof(Uint8));
+        }
     }
 
-    // Luetaan mitä ihmettä siel o
-    for (int h = 0; h < *MAPH; h++) {
-        if (fgets(line, sizeof(line), file) != NULL) {
-            char *token = strtok(line, ",");
-            for (int w = 0; w < *MAPW; w++) {
-                if (token != NULL) {
-                    (*map)[h][w] = atoi(token);
-                    token = strtok(NULL, ",");
+    // Read the map data
+    for (int d = 0; d < *MAPD; d++) {
+        for (int h = 0; h < *MAPH; h++) {
+            if (fgets(line, sizeof(line), file) != NULL) {
+                char *token = strtok(line, ",");
+                for (int w = 0; w < *MAPW; w++) {
+                    if (token != NULL) {
+                        (*map)[d][h][w] = atoi(token);
+                        token = strtok(NULL, ",");
+                    }
                 }
             }
         }
@@ -59,13 +65,6 @@ static void get_iso_coords(int gx, int gy, int gz, int* outX, int* outY)
 {
   if (outX) *outX = offsetx + ((gx * tile_width / 2) + (gy * tile_width / 2)) * rendering_scale;
   if (outY) *outY = offsety + ((gy * tile_height / 4) - (gz * tile_height / 2) - (gx * tile_height / 4)) * rendering_scale;
-}
-
-static void convert_screenspace_into_isog(int x, int y, int* outX, int* outY, int* outZ)
-{
-  if (outX) *outX = (x + offsetx) / (tile_width * rendering_scale);
-  if (outY) *outY = (y + offsety) / (tile_width * rendering_scale);
-  if (outZ) return;
 }
 
 void draw_debug_cursor() // TODO: Optimisoi tää
@@ -87,38 +86,49 @@ void draw_debug_cursor() // TODO: Optimisoi tää
 
 int load_tileset(const Application* App)
 {
-  SDL_Surface* tilesurface = SDL_LoadBMP("res/testcube.bmp");
-  tileset = SDL_CreateTextureFromSurface(App->Renderer, tilesurface);
-  if (!tileset) return -1; else return 0;
+  SDL_Surface* tilesurface1 = SDL_LoadBMP("res/1.bmp");
+  SDL_Surface* tilesurface2 = SDL_LoadBMP("res/2.bmp");
+  SDL_Surface* tilesurface3 = SDL_LoadBMP("res/3.bmp");
+  tileset1 = SDL_CreateTextureFromSurface(App->Renderer, tilesurface1);
+  tileset2 = SDL_CreateTextureFromSurface(App->Renderer, tilesurface2);
+  tileset3 = SDL_CreateTextureFromSurface(App->Renderer, tilesurface3);
+  if (!tileset1 || !tileset2 || !tileset3) return -1; else return 0;
 }
 
 void draw_tilemap(const Application* App, const char *mapname) {
-    Uint8 **map = NULL;
-    int MAPH, MAPW;
+    Uint8 ***map = NULL;
+    int MAPH, MAPW, MAPD;
 
-    // TOIMI! plz
+    // Load the map from file
     char filepath[256];
     snprintf(filepath, sizeof(filepath), "maps/%s.juusto", mapname);
-
-    loadMapFromFile(filepath, &map, &MAPH, &MAPW);
+    loadMapFromFile(filepath, &map, &MAPH, &MAPW, &MAPD);
 
     Uint8 tile_data;
     SDL_Rect srcslice;
     SDL_Rect destblt = {0, 0, tile_width * rendering_scale, tile_height * rendering_scale};
 
-    for (int ycell = 0; ycell < MAPH; ycell++) {
-        for (int xcell = MAPW - 1; xcell >= 0; xcell--) {
-            tile_data = map[ycell][xcell];
-            if (!tile_data) continue;
-
-            srcslice = (SDL_Rect){0, 0, tile_width, tile_height};
-            get_iso_coords(xcell, ycell, 0, &destblt.x, &destblt.y);
-            if (
-                destblt.x > 0 - tile_width * rendering_scale && destblt.x < App->width &&
-                destblt.y > 0 - tile_height * rendering_scale && destblt.y < App->height
-            ) {
-                SDL_RenderCopy(App->Renderer, tileset, &srcslice, &destblt);
+    for (int zcell = 0; zcell < MAPD; zcell++) {
+        for (int ycell = 0; ycell < MAPH; ycell++) {
+            for (int xcell = MAPW-1; xcell >= 0; xcell--) {
+                tile_data = map[zcell][ycell][xcell];
+                if (!tile_data) continue;
+                srcslice = (SDL_Rect){0, 0, tile_width, tile_height};
+                get_iso_coords(xcell, ycell, zcell, &destblt.x, &destblt.y);
+                if(
+                    destblt.x > 0 - tile_width * rendering_scale && destblt.x < App->width &&
+                    destblt.y > 0 - tile_height * rendering_scale && destblt.y < App->height
+                  ) {
+                    if (tile_data == 1) {
+                        SDL_RenderCopy(App->Renderer, tileset1, &srcslice, &destblt);
+                    } else if (tile_data == 2) {
+                        SDL_RenderCopy(App->Renderer, tileset2, &srcslice, &destblt);
+                    }else if (tile_data == 3) {
+                        SDL_RenderCopy(App->Renderer, tileset3, &srcslice, &destblt);
+                    }
+                }
             }
         }
     }
 }
+
