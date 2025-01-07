@@ -9,6 +9,9 @@
 #include "lib/isomap.h"
 
 #include "game.h"
+#include <iostream>
+#include <future>
+#include <string>
 
 const int wWidth = 1920;
 const int wHeight = 1080;
@@ -19,13 +22,30 @@ extern SDL_Event CurrentEvent;
 float delta_time = 0;
 int next_frame_in = 0;
 
+void konsoli() {
+    std::string input;
+    std::string komento;
+    std::string kartta;
+    std::getline(std::cin, input);
+    size_t spacePos = input.find(' ');
+
+    // Extract the substring before the first space
+    komento = input.substr(0, spacePos);
+
+    // Extract the substring after the first space
+    kartta = input.substr(spacePos + 1);
+    if(komento == "map"){
+      draw_tilemap(sWindow, kartta.c_str());
+    }
+}
+
 void display_update()
 {
   if (sWindow)
   {
     SDL_RenderClear(sWindow->Renderer);
     render_all(sWindow);
-    draw_tilemap(sWindow,"3kerros");
+    draw_tilemap(sWindow,"4kerros");
     draw_debug_cursor();
     SDL_RenderPresent(sWindow->Renderer);
   }
