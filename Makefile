@@ -1,27 +1,37 @@
-BUILD_PATH := build/
-LIBOBJ_PATH = $(BUILD_PATH)lib/
-
 COMPILER_FLAGS := -Wall -ggdb
-LINKER_FLAGS := -lsdl2 -lstdc++
+LINKER_FLAGS := -lSDL2 -lstdc++
 
-MAINOBJ := $(BUILD_PATH)main.o
-LIBOBJS := $(LIBOBJ_PATH)dynlist.o $(LIBOBJ_PATH)magic.o $(LIBOBJ_PATH)sprite.o $(LIBOBJ_PATH)control.o $(LIBOBJ_PATH)isomap.o
+MAINOBJ := \
+	main.o \
+	game.o \
+
+LIBOBJS := \
+	lib/dynlist.o \
+	lib/magic.o   \
+	lib/sprite.o  \
+	lib/control.o \
+	lib/isomap.o  \
+
+OBJS := \
+	$(MAINOBJ) \
+	$(LIBOBJS) \
 
 .PHONY: all clean distclean
+.SUFFIXES: .o .c .cpp
 
-game: $(MAINOBJ) $(LIBOBJS) $(BUILD_PATH)game.o
-	gcc $(COMPILER_FLAGS) $(shell sdl2-config --cflags --libs) $(wildcard $(BUILD_PATH)*.o) $(LIBOBJS) -o $@.o
+all: rpggame
 
-$(MAINOBJ): main.cpp
-	gcc $(COMPILER_FLAGS) -c $? -o $@
+rpggame: $(OBJS)
+	$(CXX) -o $@.o $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS)
 
-$(BUILD_PATH)game.o: game.cpp
-	gcc $(COMPILER_FLAGS) -c $? -o $@
+c.o:
+	$(CC) -c $< -o $@ $(COMPILER_FLAGS)
 
-$(LIBOBJ_PATH)%.o: lib/%.c
-	gcc $(COMPILER_FLAGS) -c $? -o $@
+.cpp.o:
+	$(CXX) -c $< -o $@ $(COMPILER_FLAGS)
 
 clean:
-	$(RM) $(wildcard $(BUILD_PATH)*.o)
-	$(RM) $(wildcard $(LIBOBJ_PATH)*.o) 
-	$(RM) game
+	$(RM) main.o
+	$(RM) game.o
+	$(RM) $(wildcard lib/*.o) 
+	$(RM) rpggame.o
