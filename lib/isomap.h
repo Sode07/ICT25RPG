@@ -22,6 +22,8 @@ void draw_tilemap(const Application* App, const char *mapname);
 
 void draw_debug_cursor();
 
+inline void load_cursor_sprite();
+
 #ifdef __cplusplus
 }
 #endif

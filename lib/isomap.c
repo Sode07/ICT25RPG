@@ -4,6 +4,7 @@
 #include <SDL2/SDL_surface.h>
 #include "magic.h"
 #include "isomap.h"
+#include "sprite.h"
 
 const int tile_width = 32;
 const int tile_height = 32;
@@ -12,8 +13,8 @@ int offsetx = 200;
 int offsety = 100;
 
 const int rendering_scale = 2;
-//tää o tosi getto ratkasu ja joudutaa lisää näit joka tilee mu onneks jokases o yläpuoli ja sivu eli yks o kaks eri tekstuurii
 SDL_Texture* tileset_loaded;
+Sprite* cursor_sprite;
 
 void loadMapFromFile(const char *filename, Uint8 ****map, int *MAPH, int *MAPW, int *MAPD)
 {
@@ -65,21 +66,20 @@ static void get_iso_coords(int gx, int gy, int gz, int* outX, int* outY)
   if (outY) *outY = offsety + ((gy * tile_height / 4) - (gz * tile_height / 2) - (gx * tile_height / 4)) * rendering_scale;
 }
 
+void load_cursor_sprite()
+{
+	if (!cursor_sprite && sWindow) cursor_sprite = load_sprite(sWindow, "res/cursor.bmp", (SDL_Rect){0, 0, 32 * rendering_scale, 32 * rendering_scale});
+}
+
 void draw_debug_cursor() // TODO: Optimisoi tää
 {
-    int screenx;
-    int screeny;
-    SDL_Rect dCursor = {0, 0, tile_width/2 * rendering_scale, tile_height * rendering_scale};
+	if (!cursor_sprite) return;
+	int screenx;
+	int screeny;
 
-    SDL_GetMouseState(&screenx, &screeny);
-    dCursor.x = (screenx - tile_width / 2) / tile_width * tile_width + offsetx % tile_width+tile_width/2;
-    dCursor.y = (screeny - tile_height / 2) / (tile_height / 2) * (tile_height / 2) + offsety % tile_height;
-
-    //printf("cx: %i, cy: %i\n", (screenx - tile_width / 2) / tile_width - offsetx / tile_width, (screeny - tile_height / 2) / (tile_height / 2) - offsety / tile_height);
-
-    SDL_SetRenderDrawColor(sWindow->Renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    if (SDL_RenderDrawRect(sWindow->Renderer, &dCursor) < 0) puts(SDL_GetError());
-    SDL_SetRenderDrawColor(sWindow->Renderer, 0x00, 0x00, 0x00, 0x00);
+	SDL_GetMouseState(&screenx, &screeny);
+	cursor_sprite->Transform.x = (screenx - tile_width / 2) / tile_width * tile_width + offsetx % tile_width+tile_width/2;
+	cursor_sprite->Transform.y = (screeny - tile_height / 2) / (tile_height / 2) * (tile_height / 2) + offsety % tile_height;
 }
 
 int load_tileset(const Application* App)
