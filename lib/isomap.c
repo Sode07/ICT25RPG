@@ -17,6 +17,7 @@ SDL_Texture* tileset_loaded;
 
 void loadMapFromFile(const char *filename, Uint8 ****map, int *MAPH, int *MAPW, int *MAPD)
 {
+	printf("loading map" + *filename);
 	FILE *file = fopen(filename, "r");
 	if (file == NULL) {
 		perror("Error opening file");

@@ -12,6 +12,7 @@
 #include <iostream>
 #include <future>
 #include <string>
+#include <thread>
 
 const int wWidth = 1920;
 const int wHeight = 1080;
@@ -21,21 +22,22 @@ extern SDL_Event CurrentEvent;
 
 float delta_time = 0;
 int next_frame_in = 0;
+bool pyörii = true;
 
 void konsoli() {
-    std::string input;
-    std::string komento;
-    std::string kartta;
-    std::getline(std::cin, input);
-    size_t spacePos = input.find(' ');
+    while (pyörii) {
+        std::string input;
+        std::string komento;
+        std::string kartta;
+        std::getline(std::cin, input);
+        size_t spacePos = input.find(' ');
 
-    // Extract the substring before the first space
-    komento = input.substr(0, spacePos);
+        komento = input.substr(0, spacePos);
 
-    // Extract the substring after the first space
-    kartta = input.substr(spacePos + 1);
-    if(komento == "map"){
-      draw_tilemap(sWindow, kartta.c_str());
+        kartta = input.substr(spacePos + 1);
+        if (komento == "map") {
+            draw_tilemap(sWindow, kartta.c_str());
+        }
     }
 }
 
@@ -45,7 +47,7 @@ void display_update()
   {
     SDL_RenderClear(sWindow->Renderer);
     render_all(sWindow);
-    draw_tilemap(sWindow,"4kerros");
+    draw_tilemap(sWindow,"test");
     draw_debug_cursor();
     SDL_RenderPresent(sWindow->Renderer);
   }
@@ -53,6 +55,7 @@ void display_update()
 
 int main(int argc, char **argv)
 {
+  std::thread consoleThread(konsoli);
   // Initialize components
   if (init_application(&sWindow, wWidth, wHeight) != 0) return 1;
   if (init_sprite_queue(10) != 0) return 2;
@@ -76,7 +79,6 @@ int main(int argc, char **argv)
       SDL_Delay(next_frame_in);
     }
   }
-
   destroy_application(sWindow);
   return 0;
 }

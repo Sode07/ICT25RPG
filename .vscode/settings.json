@@ -62,6 +62,7 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "format": "cpp",
-        "text_encoding": "cpp"
+        "text_encoding": "cpp",
+        "sdl_render.h": "c"
     }
 }
