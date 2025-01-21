@@ -26,7 +26,6 @@ Sprite* cursor_sprite;
 
 map_t loaded_map;
 
-
 static void get_iso_coords(int gx, int gy, int gz, int* outX, int* outY)
 {
   if (outX) *outX = offsetx + ((gx * tile_width / 2) + (gy * tile_width / 2)) * rendering_scale;
@@ -81,15 +80,16 @@ int load_map_from_file(const char* mapname)
 	char filepath[256];
 	char line[256];
 
-	unload_map();
 	snprintf(filepath, sizeof(filepath), "maps/%s.juusto", mapname);
 
-	printf("loading map" + *filepath);
+	printf("loading map \"%s\"\n", filepath);
 	FILE *file = fopen(filepath, "r");
 	if (file == NULL) {
 		perror("Error opening file");
 		return -1;
 	}
+	
+	unload_map();
 
 	// Read width, height, depth, and name
 	if (fgets(line, sizeof(line), file) != NULL) {
@@ -101,7 +101,10 @@ int load_map_from_file(const char* mapname)
 	for (int d = 0; d < loaded_map.map_d; d++) {
 		loaded_map.map[d] = (Uint8 **)malloc(loaded_map.map_h * sizeof(Uint8 *));
 		for (int h = 0; h < loaded_map.map_h; h++) {
-				loaded_map.map[d][h] = (Uint8 *)malloc(loaded_map.map_w * sizeof(Uint8));
+			loaded_map.map[d][h] = (Uint8 *)malloc(loaded_map.map_w);
+			for (int w = 0; w < loaded_map.map_w; w++) {
+				loaded_map.map[d][h][w] = 0;
+			}
 		}
 	}
 	
@@ -124,24 +127,20 @@ int load_map_from_file(const char* mapname)
 	fclose(file);
 
 	return 0;
+
 }
 
 void draw_tilemap(const Application* App) {
 
 	if (!loaded_map.map) return;
 
-	int MAPH, MAPW, MAPD;
-	MAPH = loaded_map.map_h;
-	MAPW = loaded_map.map_w;
-	MAPD = loaded_map.map_d;
-
 	Uint8 tile_data;
 	SDL_Rect srcslice;
 	SDL_Rect destblt = {0, 0, tile_width * rendering_scale, tile_height * rendering_scale};
 
-	for (int zcell = 0; zcell < MAPD; zcell++) {
-		for (int ycell = 0; ycell < MAPH; ycell++) {
-			for (int xcell = MAPW-1; xcell >= 0; xcell--) {
+	for (int zcell = 0; zcell < loaded_map.map_d; zcell++) {
+		for (int ycell = 0; ycell < loaded_map.map_h; ycell++) {
+			for (int xcell = loaded_map.map_w-1; xcell >= 0; xcell--) {
 				tile_data = loaded_map.map[zcell][ycell][xcell];
 				if (!tile_data) continue;
 				srcslice = (SDL_Rect){(tile_data - 1) * 32, 0, tile_width, tile_height};
@@ -156,3 +155,8 @@ void draw_tilemap(const Application* App) {
 	}
 }
 
+void cleanup_isomap()
+{
+	if (cursor_sprite) free_sprite(cursor_sprite);
+	unload_map();
+}

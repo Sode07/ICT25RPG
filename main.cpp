@@ -7,12 +7,13 @@
 #include "lib/sprite.h"
 #include "lib/control.h"
 #include "lib/isomap.h"
-
 #include "game.h"
+
 #include <iostream>
 #include <future>
 #include <string>
 #include <thread>
+#include <signal.h>
 
 const int wWidth = 640;
 const int wHeight = 480;
@@ -22,10 +23,11 @@ extern SDL_Event CurrentEvent;
 
 float delta_time = 0;
 int next_frame_in = 0;
-bool pyörii = true;
+volatile bool console_running = true;
 
 void konsoli() {
-	while (pyörii) {
+	while (console_running)
+	{
 		std::string input;
 		std::string komento;
 		std::string kartta;
@@ -53,9 +55,21 @@ void display_update() // Called for every frame
   }
 }
 
+void cleanup_main(int status)
+{
+	console_running = false;
+	cleanup_isomap();
+	destroy_sprite_queue();
+  destroy_application(sWindow);
+	exit(0);
+}
+
 int main(int argc, char **argv)
 {
-  std::thread consoleThread(konsoli);
+	signal(SIGINT, cleanup_main);
+
+	std::thread console_thread(konsoli);
+
   // Initialize components
   if (init_application(&sWindow, wWidth, wHeight) != 0) return 1;
   if (init_sprite_queue(10) != 0) return 2;
@@ -71,7 +85,7 @@ int main(int argc, char **argv)
     update_events();
     game_tick(delta_time);
 
-    if (CurrentEvent.type == SDL_QUIT) break;
+    if (CurrentEvent.type == SDL_QUIT) cleanup_main(0);
 
     display_update();
     if (next_frame_in > 0)
@@ -79,6 +93,5 @@ int main(int argc, char **argv)
       SDL_Delay(next_frame_in);
     }
   }
-  destroy_application(sWindow);
   return 0;
 }

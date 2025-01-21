@@ -26,6 +26,8 @@ void load_cursor_sprite();
 
 int load_map_from_file(const char* mapname);
 
+void cleanup_isomap();
+
 #ifdef __cplusplus
 }
 #endif
