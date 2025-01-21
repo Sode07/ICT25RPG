@@ -8,11 +8,14 @@
 
 int dyn_push(DynList* list, void* ptr)
 {
+	void* tmp_ptr;
+
   if (!list) return -1;
   if (list->clen >= list->tlen)
   {
     if (list->clen >= MAX_LENGTH) return -10;
-    if (!realloc(list->mem, list->unitsize)) return -20;
+    if (!tmp_ptr = realloc(list->mem, list->unitsize)) return -20;
+		else list->mem = (void**)tmp_ptr;
   }
   ((char**)list->mem)[list->clen] = (char*)ptr;
   list->clen++;
@@ -29,6 +32,8 @@ int dyn_pop(DynList* list)
 
 int dyn_rem(DynList* list, void* ptr)
 {
+	void* tmp_ptr;
+
   for (int i = 0; i < list->clen; i++)
   {
     if (i == 0)
@@ -36,7 +41,8 @@ int dyn_rem(DynList* list, void* ptr)
     else if (list->mem[i] == ptr) {
       free(ptr);
       memcpy(list->mem+i, list->mem+i+1, list->clen - i);
-      if (!realloc(list->mem, --list->tlen)) return -40;
+      if (!tmp_ptr = realloc(list->mem, --list->tlen)) return -40;
+			else list->mem = tmp_ptr;
     }
     list->clen--;
     return 0;
@@ -50,6 +56,7 @@ void dyn_free(DynList* list)
   {
     free(list->mem[i]);
   }
+	free(list);
 }
 
 DynList* init_dynlist(size_t len, size_t size)
