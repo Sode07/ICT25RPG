@@ -36,7 +36,17 @@ static void get_iso_coords(int gx, int gy, int gz, int* outX, int* outY)
 static void unload_map()
 {
 	if (!loaded_map.map) return;
+
+	for (int d = 0; d < loaded_map.map_d; d++)
+	{
+		for (int h = 0; h < loaded_map.map_h; h++)
+		{
+			free(loaded_map.map[d][h]);
+		}
+		free(loaded_map.map[d]);
+	}
 	free(loaded_map.map);
+
 	free(loaded_map.name);
 	loaded_map.map_w = 0;
 	loaded_map.map_h = 0;
@@ -87,7 +97,7 @@ int load_map_from_file(const char* mapname)
 	}
 
 	// Allocate memory for the map
-	loaded_map.map = (Uint8 ***)malloc(loaded_map.map_h * sizeof(Uint8 **));
+	loaded_map.map = (Uint8 ***)malloc(loaded_map.map_d * sizeof(Uint8 **));
 	for (int d = 0; d < loaded_map.map_d; d++) {
 		loaded_map.map[d] = (Uint8 **)malloc(loaded_map.map_h * sizeof(Uint8 *));
 		for (int h = 0; h < loaded_map.map_h; h++) {
