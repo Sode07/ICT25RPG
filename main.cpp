@@ -14,8 +14,8 @@
 #include <string>
 #include <thread>
 
-const int wWidth = 1920;
-const int wHeight = 1080;
+const int wWidth = 640;
+const int wHeight = 480;
 
 Application* sWindow;
 extern SDL_Event CurrentEvent;
@@ -25,29 +25,29 @@ int next_frame_in = 0;
 bool pyörii = true;
 
 void konsoli() {
-    while (pyörii) {
-        std::string input;
-        std::string komento;
-        std::string kartta;
-        std::getline(std::cin, input);
-        size_t spacePos = input.find(' ');
+	while (pyörii) {
+		std::string input;
+		std::string komento;
+		std::string kartta;
+		std::getline(std::cin, input);
+		size_t spacePos = input.find(' ');
 
-        komento = input.substr(0, spacePos);
+		komento = input.substr(0, spacePos);
 
-        kartta = input.substr(spacePos + 1);
-        if (komento == "map") {
-            draw_tilemap(sWindow, kartta.c_str());
-        }
-    }
+		kartta = input.substr(spacePos + 1);
+		if (komento == "map") {
+			load_map_from_file("test");
+		}
+	}
 }
 
-void display_update()
+void display_update() // Called for every frame
 {
   if (sWindow)
   {
     SDL_RenderClear(sWindow->Renderer);
     render_all(sWindow);
-    draw_tilemap(sWindow,"test");
+    draw_tilemap(sWindow);
     draw_debug_cursor();
     SDL_RenderPresent(sWindow->Renderer);
   }

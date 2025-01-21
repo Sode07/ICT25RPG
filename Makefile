@@ -17,18 +17,18 @@ OBJS := \
 	$(LIBOBJS) \
 
 .PHONY: all clean distclean
-.SUFFIXES: .o .c .cpp
+.SUFFIXES: .c .o .cpp
 
 all: rpggame
 
 rpggame: $(OBJS)
 	$(CXX) -o $@.o $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS)
 
-c.o:
-	$(CC) -c $< -o $@ $(COMPILER_FLAGS)
+.c.o:
+	$(CC) $(COMPILER_FLAGS) -c $< -o $@ 
 
 .cpp.o:
-	$(CXX) -c $< -o $@ $(COMPILER_FLAGS)
+	$(CXX) $(COMPILER_FLAGS) -c $< -o $@ 
 
 clean:
 	$(RM) main.o

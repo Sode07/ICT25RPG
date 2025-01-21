@@ -18,11 +18,13 @@ typedef struct {
 
 int load_tileset(const Application* App);
 
-void draw_tilemap(const Application* App, const char *mapname);
+void draw_tilemap(const Application* App);
 
 void draw_debug_cursor();
 
-inline void load_cursor_sprite();
+void load_cursor_sprite();
+
+int load_map_from_file(const char* mapname);
 
 #ifdef __cplusplus
 }

@@ -6,6 +6,14 @@
 #include "isomap.h"
 #include "sprite.h"
 
+typedef struct {
+	char* name;
+	int map_w;
+	int map_h;
+	int map_d;
+	Uint8*** map;
+} map_t;
+
 const int tile_width = 32;
 const int tile_height = 32;
 
@@ -16,49 +24,8 @@ const int rendering_scale = 2;
 SDL_Texture* tileset_loaded;
 Sprite* cursor_sprite;
 
-void loadMapFromFile(const char *filename, Uint8 ****map, int *MAPH, int *MAPW, int *MAPD)
-{
-	printf("loading map" + *filename);
-	FILE *file = fopen(filename, "r");
-	if (file == NULL) {
-		perror("Error opening file");
-		return;
-	}
+map_t loaded_map;
 
-	char line[256];
-	char name[256];
-
-	// Read width, height, depth, and name
-	if (fgets(line, sizeof(line), file) != NULL) {
-		sscanf(line, ",w%d,h%d,d%d,\"%[^\"]\",", MAPW, MAPH, MAPD, name);
-	}
-
-	// Allocate memory for the map
-	*map = (Uint8 ***)malloc(*MAPD * sizeof(Uint8 **));
-	for (int d = 0; d < *MAPD; d++) {
-		(*map)[d] = (Uint8 **)malloc(*MAPH * sizeof(Uint8 *));
-		for (int h = 0; h < *MAPH; h++) {
-				(*map)[d][h] = (Uint8 *)malloc(*MAPW * sizeof(Uint8));
-		}
-	}
-
-    // Read the map data
-	for (int d = 0; d < *MAPD; d++) {
-		for (int h = 0; h < *MAPH; h++) {
-			if (fgets(line, sizeof(line), file) != NULL) {
-				char *token = strtok(line, ",");
-				for (int w = 0; w < *MAPW; w++) {
-					if (token != NULL) {
-						(*map)[d][h][w] = atoi(token);
-						token = strtok(NULL, ",");
-					}
-				}
-			}
-		}
-	}
-
-    fclose(file);
-}
 
 static void get_iso_coords(int gx, int gy, int gz, int* outX, int* outY)
 {
@@ -89,14 +56,64 @@ int load_tileset(const Application* App)
 	return 0;
 }
 
-void draw_tilemap(const Application* App, const char *mapname) {
-	Uint8 ***map = NULL;
-	int MAPH, MAPW, MAPD;
-
-	// Load the map from file
+int load_map_from_file(const char* mapname)
+{	
 	char filepath[256];
+	char line[256];
+	char name[256];
+	
 	snprintf(filepath, sizeof(filepath), "maps/%s.juusto", mapname);
-	loadMapFromFile(filepath, &map, &MAPH, &MAPW, &MAPD);
+
+	printf("loading map" + *filepath);
+	FILE *file = fopen(filepath, "r");
+	if (file == NULL) {
+		perror("Error opening file");
+		return -1;
+	}
+
+	// Read width, height, depth, and name
+	if (fgets(line, sizeof(line), file) != NULL) {
+		sscanf(line, ",w%d,h%d,d%d,\"%[^\"]\",",&loaded_map.map_w, &loaded_map.map_h, &loaded_map.map_d); // SS can F!
+		loaded_map.name = name;
+	}
+
+	// Allocate memory for the map
+	loaded_map.map = (Uint8 ***)malloc(loaded_map.map_h * sizeof(Uint8 **));
+	for (int d = 0; d < loaded_map.map_d; d++) {
+		loaded_map.map[d] = (Uint8 **)malloc(loaded_map.map_h * sizeof(Uint8 *));
+		for (int h = 0; h < loaded_map.map_h; h++) {
+				loaded_map.map[d][h] = (Uint8 *)malloc(loaded_map.map_w * sizeof(Uint8));
+		}
+	}
+
+    // Read the map data
+	for (int d = 0; d < loaded_map.map_d; d++) {
+		for (int h = 0; h < loaded_map.map_h; h++) {
+			if (fgets(line, sizeof(line), file) != NULL) {
+				char *token = strtok(line, ",");
+				for (int w = 0; w < loaded_map.map_w; w++) {
+					if (token != NULL) {
+						loaded_map.map [d][h][w] = atoi(token);
+						token = strtok(NULL, ",");
+					}
+				}
+			}
+		}
+	}
+
+	fclose(file);
+
+	return 0;
+}
+
+void draw_tilemap(const Application* App) {
+
+	if (!loaded_map.map) return;
+
+	int MAPH, MAPW, MAPD;
+	MAPH = loaded_map.map_h;
+	MAPW = loaded_map.map_w;
+	MAPD = loaded_map.map_d;
 
 	Uint8 tile_data;
 	SDL_Rect srcslice;
@@ -105,7 +122,7 @@ void draw_tilemap(const Application* App, const char *mapname) {
 	for (int zcell = 0; zcell < MAPD; zcell++) {
 		for (int ycell = 0; ycell < MAPH; ycell++) {
 			for (int xcell = MAPW-1; xcell >= 0; xcell--) {
-				tile_data = map[zcell][ycell][xcell];
+				tile_data = loaded_map.map[zcell][ycell][xcell];
 				if (!tile_data) continue;
 				srcslice = (SDL_Rect){(tile_data - 1) * 32, 0, tile_width, tile_height};
 				get_iso_coords(xcell, ycell, zcell, &destblt.x, &destblt.y);
