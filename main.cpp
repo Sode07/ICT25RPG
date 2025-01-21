@@ -36,7 +36,7 @@ void konsoli() {
 
 		kartta = input.substr(spacePos + 1);
 		if (komento == "map") {
-			load_map_from_file("test");
+			load_map_from_file(kartta.c_str());
 		}
 	}
 }

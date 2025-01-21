@@ -8,9 +8,9 @@
 
 typedef struct {
 	char* name;
-	int map_w;
-	int map_h;
-	int map_d;
+  unsigned int map_w;
+  unsigned int map_h;
+  unsigned int map_d;
 	Uint8*** map;
 } map_t;
 
@@ -31,6 +31,16 @@ static void get_iso_coords(int gx, int gy, int gz, int* outX, int* outY)
 {
   if (outX) *outX = offsetx + ((gx * tile_width / 2) + (gy * tile_width / 2)) * rendering_scale;
   if (outY) *outY = offsety + ((gy * tile_height / 4) - (gz * tile_height / 2) - (gx * tile_height / 4)) * rendering_scale;
+}
+
+static void unload_map()
+{
+	if (!loaded_map.map) return;
+	free(loaded_map.map);
+	free(loaded_map.name);
+	loaded_map.map_w = 0;
+	loaded_map.map_h = 0;
+	loaded_map.map_d = 0;
 }
 
 void load_cursor_sprite()
@@ -60,8 +70,8 @@ int load_map_from_file(const char* mapname)
 {	
 	char filepath[256];
 	char line[256];
-	char name[256];
-	
+
+	unload_map();
 	snprintf(filepath, sizeof(filepath), "maps/%s.juusto", mapname);
 
 	printf("loading map" + *filepath);
@@ -73,8 +83,7 @@ int load_map_from_file(const char* mapname)
 
 	// Read width, height, depth, and name
 	if (fgets(line, sizeof(line), file) != NULL) {
-		sscanf(line, ",w%d,h%d,d%d,\"%[^\"]\",",&loaded_map.map_w, &loaded_map.map_h, &loaded_map.map_d); // SS can F!
-		loaded_map.name = name;
+		sscanf(line, ",w%d,h%d,d%d,\"%[^\"]\",", &loaded_map.map_w, &loaded_map.map_h, &loaded_map.map_d, loaded_map.name); // SS can F!
 	}
 
 	// Allocate memory for the map
@@ -85,6 +94,7 @@ int load_map_from_file(const char* mapname)
 				loaded_map.map[d][h] = (Uint8 *)malloc(loaded_map.map_w * sizeof(Uint8));
 		}
 	}
+	
 
     // Read the map data
 	for (int d = 0; d < loaded_map.map_d; d++) {
