@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef h_control_h
 #define h_control_h
 

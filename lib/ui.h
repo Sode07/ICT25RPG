@@ -2,10 +2,11 @@
 #define H_UI_H
 
 #include "dynlist.h"
-#include "SDL/SDL2.h"
+#include <SDL2/SDL.h>
 
 typedef struct {
-	Dynlist* fonts_avail;
+  bool present;
+	DynList* fonts_avail;
 	const char** fonts_name;
 } LoadedFonts;
 
@@ -21,8 +22,9 @@ typedef struct {
 extern "C" {
 #endif
 
-
-
+#ifdef __DEBUG__
+void list_loaded_ui_components();
+#endif
 
 #ifdef __cplusplus
 }

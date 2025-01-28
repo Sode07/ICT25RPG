@@ -11,6 +11,7 @@ LIBOBJS := \
 	lib/sprite.o  \
 	lib/control.o \
 	lib/isomap.o  \
+	lib/console.o \
 
 OBJS := \
 	$(MAINOBJ) \
@@ -22,7 +23,7 @@ OBJS := \
 all: rpggame
 
 rpggame: $(OBJS)
-	$(CXX) -o $@.o $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS)
+	$(CXX) -o $@ $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS)
 
 .c.o:
 	$(CC) $(COMPILER_FLAGS) -c $< -o $@ 
@@ -34,4 +35,4 @@ clean:
 	$(RM) main.o
 	$(RM) game.o
 	$(RM) $(wildcard lib/*.o) 
-	$(RM) rpggame.o
+	$(RM) rpggame

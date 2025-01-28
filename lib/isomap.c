@@ -2,6 +2,7 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_stdinc.h>
 #include <SDL2/SDL_surface.h>
+#include "console.h"
 #include "magic.h"
 #include "isomap.h"
 #include "sprite.h"
@@ -76,13 +77,13 @@ int load_tileset(const Application* App)
 }
 
 int load_map_from_file(const char* mapname)
-{	
+{
 	char filepath[256];
 	char line[256];
 
 	snprintf(filepath, sizeof(filepath), "maps/%s.juusto", mapname);
 
-	printf("loading map \"%s\"\n", filepath);
+  KLOG_INFO("loading map: %s", filepath);
 	FILE *file = fopen(filepath, "r");
 	if (file == NULL) {
 		perror("Error opening file");
@@ -109,7 +110,7 @@ int load_map_from_file(const char* mapname)
 	}
 	
 
-    // Read the map data
+  // Read the map data
 	for (int d = 0; d < loaded_map.map_d; d++) {
 		for (int h = 0; h < loaded_map.map_h; h++) {
 			if (fgets(line, sizeof(line), file) != NULL) {
@@ -130,7 +131,8 @@ int load_map_from_file(const char* mapname)
 
 }
 
-void draw_tilemap(const Application* App) {
+void draw_tilemap(const Application* App)
+{
 
 	if (!loaded_map.map) return;
 

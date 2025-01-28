@@ -4,8 +4,6 @@
 #include "lib/magic.h"
 #include "lib/sprite.h"
 #include "lib/control.h"
-#include "lib/isomap.h"
-#include "lib/flags.h"
 
 Sprite* chocobo;
 extern int offsetx;

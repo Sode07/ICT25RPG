@@ -1,7 +1,3 @@
-#pragma once
-
-#include <stddef.h>
-
 /*
  * Dynamic Heap-Allocated Pointer List
  * 
@@ -10,15 +6,11 @@
  * copyleft 2024-12-10 Jussi
  * redistribute whenever possible
 */
-
 #ifndef h_dynlist_h
 #define h_dynlist_h
 
+#include <stddef.h>
 #include "magic.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 typedef struct {
   void** mem;
@@ -26,6 +18,10 @@ typedef struct {
   size_t clen;
   size_t unitsize;
 } DynList;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Preallocates heap memory */
 DynList* init_dynlist(size_t len, size_t size);

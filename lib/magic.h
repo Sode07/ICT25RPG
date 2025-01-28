@@ -1,20 +1,12 @@
-#pragma once
-
-#include <SDL2/SDL.h>
-#include <stdbool.h>
-#include <stdio.h>
-
-#include "magic.h"
-
 #ifndef h_magic_h
 #define h_magic_h
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <SDL2/SDL.h>
+
+#define __DEBUG__ // Enable debug functions
 
 typedef struct {
-SDL_Window* Window;
+  SDL_Window* Window;
 	SDL_Renderer* Renderer;
 	int width;
 	int height;
@@ -29,6 +21,10 @@ typedef enum {
 } ApplicationInitStatus;
 
 extern Application* sWindow;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Wrapper function for window creation. */
 Application* init_application(int window_width, int window_height);

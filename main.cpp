@@ -7,11 +7,9 @@
 #include "lib/sprite.h"
 #include "lib/control.h"
 #include "lib/isomap.h"
+#include "lib/console.h"
 #include "game.h"
 
-#include <iostream>
-#include <future>
-#include <string>
 #include <thread>
 #include <signal.h>
 
@@ -24,24 +22,6 @@ extern SDL_Event CurrentEvent;
 float delta_time = 0;
 int next_frame_in = 0;
 volatile bool console_running = true;
-
-void konsoli() {
-	while (console_running)
-	{
-		std::string input;
-		std::string komento;
-		std::string kartta;
-		std::getline(std::cin, input);
-		size_t spacePos = input.find(' ');
-
-		komento = input.substr(0, spacePos);
-
-		kartta = input.substr(spacePos + 1);
-		if (komento == "map") {
-			load_map_from_file(kartta.c_str());
-		}
-	}
-}
 
 void display_update() // Called for every frame
 {

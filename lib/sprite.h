@@ -1,5 +1,3 @@
-#pragma once
-
 /*
  * The Laatu sprite system ver. 1.02
  *
@@ -16,16 +14,14 @@
 
 #include "magic.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
 typedef struct {
 	SDL_Texture* Texture;
 	SDL_Rect Transform;
 } Sprite;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* Allocates heap memory to store the sprites. Must be called before any sprites are loaded. */
 int init_sprite_queue(size_t length);
@@ -45,8 +41,10 @@ void render_sprite(const Application* App, Sprite* sprite);
 /* Renders all loaded sprites */
 void render_all(const Application* App);
 
+#ifdef __DEBUG__
 /* Debug function for listing valid sprite pointers */
 void list_loaded_sprites();
+#endif
 
 #ifdef __cplusplus
 }
