@@ -41,10 +41,9 @@ Sprite* load_sprite(const Application* App, const char* path, SDL_Rect transform
 int free_sprite(Sprite* sprite_value)
 {
 	if (!sprite_value) return -1;
-	
+	SDL_DestroyTexture(sprite_value->Texture);
 	if (dyn_rem(sprite_queue, sprite_value) == 0)
 	{
-		sprite_value = NULL;
 		return 0;
 	}
 

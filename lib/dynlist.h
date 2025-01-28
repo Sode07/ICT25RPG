@@ -40,7 +40,6 @@ int dyn_pop(DynList* list);
 int dyn_rem(DynList* list, void* ptr);
 
 /* Deletes the whole dynlist from memory */
-/* Vois olla DynList** */
 void dyn_free(DynList* list);
 
 #ifdef __cplusplus

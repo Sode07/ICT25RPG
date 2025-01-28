@@ -158,5 +158,6 @@ void draw_tilemap(const Application* App) {
 void cleanup_isomap()
 {
 	if (cursor_sprite) free_sprite(cursor_sprite);
+	if (tileset_loaded) SDL_DestroyTexture(tileset_loaded);
 	unload_map();
 }

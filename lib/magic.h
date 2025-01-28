@@ -31,7 +31,7 @@ typedef enum {
 extern Application* sWindow;
 
 /* Wrapper function for window creation. */
-ApplicationInitStatus init_application(Application** outApp, int window_width, int window_height);
+Application* init_application(int window_width, int window_height);
 
 /* Wrapper for freeing the created window. Call when exiting. */
 void destroy_application (Application* App);

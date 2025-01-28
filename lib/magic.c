@@ -24,14 +24,14 @@ char* get_error()
 	return  errorstr;	
 }
 
-ApplicationInitStatus init_application(Application** outApp, int window_width, int window_height)
+Application* init_application(int window_width, int window_height)
 {
-	*outApp = malloc(sizeof(Application));
-	if (!*outApp) return APP_UNKNOWN;
+	Application* outApp = malloc(sizeof(Application));
+	if (!outApp) return NULL;
 
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) return APP_VIDEO_SUBSYSTEM_FAIL;
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) return NULL;
 	
-	(*outApp)->Window = SDL_CreateWindow(
+	outApp->Window = SDL_CreateWindow(
     "jai",
     SDL_WINDOWPOS_CENTERED,
     SDL_WINDOWPOS_CENTERED,
@@ -39,25 +39,25 @@ ApplicationInitStatus init_application(Application** outApp, int window_width, i
     window_height,
     SDL_WINDOW_SHOWN
   );
-	if (!(*outApp)->Window) return APP_WINDOW_CREATION_FAIL;
+	if (!outApp->Window) return NULL;
 
-	(*outApp)->Renderer = SDL_CreateRenderer((*outApp)->Window, 0, SDL_RENDERER_ACCELERATED);
-	if (!(*outApp)->Renderer) return APP_RENDERER_CREATION_FAIL;
+	outApp->Renderer = SDL_CreateRenderer(outApp->Window, 0, SDL_RENDERER_ACCELERATED);
+	if (!outApp->Renderer) return NULL;
 
-	(*outApp)->width = window_width;
-	(*outApp)->height = window_height;
+	outApp->width = window_width;
+	outApp->height = window_height;
 
-	return APP_SUCCESS;
+	return outApp;
 }
 
 void destroy_application (Application* App)
 {
 	if (App)
 	{
-		if (App->Window) SDL_DestroyWindow(App->Window);
 		if (App->Renderer) SDL_DestroyRenderer(App->Renderer);
-		free(App);
-		App = NULL;
+		if (App->Window) SDL_DestroyWindow(App->Window);
+		SDL_QuitSubSystem(SDL_INIT_VIDEO);
+		SDL_Quit();
 	}
 }
 

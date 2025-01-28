@@ -48,7 +48,6 @@ void display_update() // Called for every frame
   if (sWindow)
   {
     SDL_RenderClear(sWindow->Renderer);
-    render_all(sWindow);
     draw_tilemap(sWindow);
     draw_debug_cursor();
     SDL_RenderPresent(sWindow->Renderer);
@@ -58,9 +57,11 @@ void display_update() // Called for every frame
 void cleanup_main(int status)
 {
 	console_running = false;
+	game_cleanup();
 	cleanup_isomap();
 	destroy_sprite_queue();
   destroy_application(sWindow);
+	free(sWindow);
 	exit(0);
 }
 
@@ -71,7 +72,7 @@ int main(int argc, char **argv)
 	std::thread console_thread(konsoli);
 
   // Initialize components
-  if (init_application(&sWindow, wWidth, wHeight) != 0) return 1;
+  if (!(sWindow = init_application(wWidth, wHeight))) return 1;
   if (init_sprite_queue(10) != 0) return 2;
   if (load_tileset(sWindow)) return 4;
   if (game_init(sWindow) != 0) return 3;
