@@ -1,3 +1,4 @@
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_render.h>
@@ -26,30 +27,36 @@ volatile bool console_running = true;
 void display_update() // Called for every frame
 {
   if (sWindow)
-  {
-    SDL_RenderClear(sWindow->Renderer);
-    draw_tilemap(sWindow);
-    draw_debug_cursor();
-    SDL_RenderPresent(sWindow->Renderer);
-  }
+    {
+      SDL_RenderClear(sWindow->Renderer);
+      draw_tilemap(sWindow);
+      draw_debug_cursor();
+      SDL_RenderPresent(sWindow->Renderer);
+    }
 }
 
 void cleanup_main(int status)
 {
-	console_running = false;
-	game_cleanup();
-	cleanup_isomap();
-	destroy_sprite_queue();
+  console_running = false;
+  game_cleanup();
+  cleanup_isomap();
+  destroy_sprite_queue();
   destroy_application(sWindow);
-	free(sWindow);
-	exit(0);
+  free(sWindow);
+  exit(0);
+}
+
+void handle_sigsev(int status)
+{
+    // PUMMM
 }
 
 int main(int argc, char **argv)
 {
-	signal(SIGINT, cleanup_main);
+  signal(SIGINT, cleanup_main);
+  signal(SIGSEV, handle_sigsev);
 
-	std::thread console_thread(konsoli);
+  std::thread console_thread(konsoli);
 
   // Initialize components
   if (!(sWindow = init_application(wWidth, wHeight))) return 1;
@@ -57,22 +64,24 @@ int main(int argc, char **argv)
   if (load_tileset(sWindow)) return 4;
   if (game_init(sWindow) != 0) return 3;
 
+  load_cursor_sprite();
+
   // Main activity loop
   while (true)
-  {
-    update_delta_time();
-    next_frame_in = (0.016 - delta_time) * 1000;
-
-    update_events();
-    game_tick(delta_time);
-
-    if (CurrentEvent.type == SDL_QUIT) cleanup_main(0);
-
-    display_update();
-    if (next_frame_in > 0)
     {
-      SDL_Delay(next_frame_in);
+      update_delta_time();
+      next_frame_in = (0.016 - delta_time) * 1000;
+
+      update_events();
+      game_tick(delta_time);
+
+      if (CurrentEvent.type == SDL_QUIT) cleanup_main(0);
+
+      display_update();
+      if (next_frame_in > 0)
+	{
+	  SDL_Delay(next_frame_in);
+	}
     }
-  }
   return 0;
 }

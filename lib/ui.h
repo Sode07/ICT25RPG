@@ -4,18 +4,20 @@
 #include "dynlist.h"
 #include <SDL2/SDL.h>
 
-typedef struct {
-  bool present;
-	DynList* fonts_avail;
-	const char** fonts_name;
-} LoadedFonts;
+#define GET_FONT_NAME(FC_LIST, INDEX) ((Font*)dyn_get(FC_LIST, INDEX))->name
+#define GET_FONT_TEXTURE(FC_LIST, INDEX) ((Font*)dyn_get(FC_LIST, INDEX))->fnt_texture
 
 typedef struct {
-	Uint8 font_index;	
+    SDL_Texture* fnt_texture;
+    char* name;
+} Font;
+
+typedef struct {
+    Uint8 font_index;	
 } UiSceneComponent;
 
 typedef struct {
-	UiSceneComponent* components;
+    UiSceneComponent* components;
 } UiScene;
 
 #ifdef __cplusplus
@@ -23,7 +25,7 @@ extern "C" {
 #endif
 
 #ifdef __DEBUG__
-void list_loaded_ui_components();
+    void list_loaded_ui_components();
 #endif
 
 #ifdef __cplusplus

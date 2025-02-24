@@ -26,7 +26,7 @@ rpggame: $(OBJS)
 	$(CXX) -o $@ $(OBJS) $(COMPILER_FLAGS) $(LINKER_FLAGS)
 
 .c.o:
-	$(CC) $(COMPILER_FLAGS) -c $< -o $@ 
+	$(CC) $(COMPILER_FLAGS) -std=c99 -c $< -o $@ 
 
 .cpp.o:
 	$(CXX) $(COMPILER_FLAGS) -c $< -o $@ 

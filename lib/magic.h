@@ -2,6 +2,7 @@
 #define h_magic_h
 
 #include <SDL2/SDL.h>
+#include <stdio.h>
 
 #define __DEBUG__ // Enable debug functions
 

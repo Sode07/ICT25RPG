@@ -1,0 +1,10 @@
+;; Object ict25rpg
+;; EDE Project Files are auto generated: Do Not Edit
+(ede-proj-project "ict25rpg"
+  :file "Project.ede"
+  :name "ict25rpg"
+  :targets nil
+  :configurations '("debug" "release")
+  :object-name "ict25rpg"
+  :makefile-type Makefile
+  :configuration-variables '("debug" (("DEBUG" . "1"))))
