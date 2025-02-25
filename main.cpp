@@ -14,8 +14,8 @@
 #include <thread>
 #include <signal.h>
 
-const int wWidth = 640;
-const int wHeight = 480;
+const int wWidth = 720;
+const int wHeight = 640;
 
 Application* sWindow;
 extern SDL_Event CurrentEvent;
@@ -46,7 +46,7 @@ void cleanup_main(int status)
   exit(0);
 }
 
-void handle_sigsev(int status)
+void handle_sigsegv(int status)
 {
     // PUMMM
 }
@@ -54,7 +54,7 @@ void handle_sigsev(int status)
 int main(int argc, char **argv)
 {
   signal(SIGINT, cleanup_main);
-  signal(SIGSEV, handle_sigsev);
+  signal(SIGSEGV, handle_sigsegv);
 
   std::thread console_thread(konsoli);
 

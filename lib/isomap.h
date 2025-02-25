@@ -3,6 +3,10 @@
 
 #include "magic.h"
 
+#define CLAMP_MAX(N, MAX) N = N > MAX ? MAX : N
+#define CLAMP_MIN(N, MIN) N = N < MIN ? MIN : N
+#define CLAMP(N, MIN, MAX) {CLAMP_MIN(N, MIN); CLAMP_MAX(N, MAX);}
+
 typedef struct {
   int x;
   int y;
