@@ -54,7 +54,7 @@ void handle_sigsegv(int status)
 int main(int argc, char **argv)
 {
   signal(SIGINT, cleanup_main);
-  signal(SIGSEGV, handle_sigsegv);
+  // signal(SIGSEGV, handle_sigsegv);
 
   std::thread console_thread(konsoli);
 

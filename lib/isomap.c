@@ -86,18 +86,23 @@ static SDL_Rect get_viewable_tiles_rect()
     int x_index_start, y_index_start;
     int ss_tile_width, ss_tile_height;
     int x_length, y_length;
-
+    const int magic = 180;
+    const int magic2 = 90;
+    
     if (!sWindow)
 	raise(SIGSEGV);
 
     get_tile_screenspace_dimensions(&ss_tile_width, &ss_tile_height);
     
-    x_index_start = (-offsetx/4 + offsety/2 - (180 * (int)rendering_scale)) / ss_tile_width;
-    y_index_start = (-offsety/2 + abs(offsetx/4)) / ss_tile_height;
+    x_index_start = (-offsetx/2 + offsety - (magic * (int)rendering_scale)) / ss_tile_width;
+    y_index_start = (-offsety/2 + abs(offsetx/4) + (magic2 * (int)rendering_scale )) / ss_tile_height;
 
-    x_length = (offsetx < 0 ? offsetx : 0) + sWindow->width / ss_tile_width;
-    y_length = (offsety < 0 ? offsety : 0) + sWindow->height / ss_tile_height * 2;
+    /* x_length = (offsetx < 0 ? offsetx : 0) + sWindow->width / ss_tile_width; */
+    /* y_length = (offsety < 0 ? offsety : 0) + sWindow->height / ss_tile_height * 2; */
 
+    x_length = 10;
+    y_length = 10;
+    
     return (SDL_Rect){x_index_start, y_index_start, x_length, y_length};
 }
 
@@ -166,11 +171,14 @@ int load_map_from_file(const char* mapname)
 
   // Allocate memory for the map
   loaded_map.map = (Uint8 ***)malloc(loaded_map.map_d * sizeof(Uint8 **));
-  for (int d = 0; d < loaded_map.map_d; d++) {
+  for (int d = 0; d < loaded_map.map_d; d++)
+  {
     loaded_map.map[d] = (Uint8 **)malloc(loaded_map.map_h * sizeof(Uint8 *));
-    for (int h = 0; h < loaded_map.map_h; h++) {
+    for (int h = 0; h < loaded_map.map_h; h++)
+    {
       loaded_map.map[d][h] = (Uint8 *)malloc(loaded_map.map_w);
-      for (int w = 0; w < loaded_map.map_w; w++) {
+      for (int w = 0; w < loaded_map.map_w; w++)
+      {
 	loaded_map.map[d][h][w] = 0;
       }
     }
@@ -212,14 +220,13 @@ void draw_tilemap(const Application* App)
     CLAMP_MAX(viewable_tiles.w, loaded_map.map_w - viewable_tiles.x);
 
     CLAMP(viewable_tiles.y, 0, loaded_map.map_h);
+    CLAMP_MAX(viewable_tiles.h, loaded_map.map_h - viewable_tiles.y);
     
-    KLOG_INFO("sx %i, wx %i, sy %i, wy %i", viewable_tiles.x, viewable_tiles.w, viewable_tiles.y, viewable_tiles.h);
-
     for (int zcell = 0; zcell < loaded_map.map_d; zcell++)
     {
-	for (int ycell = viewable_tiles.y; ycell < loaded_map.map_h; ycell++)
+	for (int ycell = viewable_tiles.y; ycell < +viewable_tiles.y + viewable_tiles.h; ycell++)
 	{
-	    for (int xcell = loaded_map.map_w-1; xcell >= viewable_tiles.x; xcell--)
+	    for (int xcell = viewable_tiles.x + viewable_tiles.w; xcell >= viewable_tiles.x; xcell--)
 	    {
 		tile_data = loaded_map.map[zcell][ycell][xcell];
 		if (!tile_data) continue;
