@@ -1,4 +1,6 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_surface.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,7 +11,7 @@
 
 /* BEGIN PRIVATE GLOBALS */
 
-DynList* sprite_queue = NULL; 
+static DynList* sprite_queue = NULL; 
 
 /* END PRIVATE GLOBALS */
 
@@ -31,7 +33,8 @@ Sprite* load_sprite(const Application* App, const char* path, SDL_Rect transform
   SDL_Texture* SpriteTexture = SDL_CreateTextureFromSurface(App->Renderer, SpriteSurface);
 
   Sprite* out = malloc(sizeof(Sprite));
-  if (dyn_push(sprite_queue, out) < 0) return NULL; 	
+  if (dyn_push(sprite_queue, out) < 0) return NULL;
+  out->Surface = SpriteSurface;
   out->Texture = SpriteTexture;
   out->Transform = transform;
 
@@ -41,6 +44,7 @@ Sprite* load_sprite(const Application* App, const char* path, SDL_Rect transform
 int free_sprite(Sprite* sprite_value)
 {
   if (!sprite_value) return -1;
+  SDL_FreeSurface(sprite_value->Surface);
   SDL_DestroyTexture(sprite_value->Texture);
   if (dyn_rem(sprite_queue, sprite_value) == 0)
   {
@@ -81,7 +85,7 @@ void list_loaded_sprites()
 void destroy_sprite_queue()
 {
   if (!sprite_queue) return;
-  dyn_free(sprite_queue);
+  dyn_free(&sprite_queue);
 }
 
 /* ---- END PUBLIC FUNCTIONS ---- */

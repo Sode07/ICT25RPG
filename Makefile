@@ -1,4 +1,4 @@
-COMPILER_FLAGS := -Wall -ggdb
+COMPILER_FLAGS := -Wall -ggdb -D _DEBUG
 LINKER_FLAGS := -lSDL2 -lstdc++
 
 MAINOBJ := \

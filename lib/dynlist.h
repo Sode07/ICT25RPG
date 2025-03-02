@@ -36,7 +36,7 @@ extern "C" {
     int dyn_rem(DynList* list, void* ptr);
 
     /* Deletes the whole dynlist from memory */
-    void dyn_free(DynList* list);
+    void dyn_free(DynList** list);
 
     /* Get value at index if too lazy to derefrence mem */
     void* dyn_get(DynList* list, size_t index);

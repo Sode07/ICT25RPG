@@ -5,7 +5,7 @@
  *
  * copyleft 2024-12-10 Jussi
  * redistribute whenever possible
-*/
+ */
 
 #ifndef h_sprite_h
 #define h_sprite_h
@@ -15,35 +15,36 @@
 #include "magic.h"
 
 typedef struct {
-	SDL_Texture* Texture;
-	SDL_Rect Transform;
+    SDL_Texture* Texture;
+    SDL_Surface* Surface;
+    SDL_Rect Transform;
 } Sprite;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Allocates heap memory to store the sprites. Must be called before any sprites are loaded. */
-int init_sprite_queue(size_t length);
+    /* Allocates heap memory to store the sprites. Must be called before any sprites are loaded. */
+    int init_sprite_queue(size_t length);
 
-/* Free the allocated sprite memory */
-void destroy_sprite_queue();
+    /* Free the allocated sprite memory */
+    void destroy_sprite_queue();
 
-/* Wrapper for loading a bitmap image with heap allocation. */
-Sprite* load_sprite(const Application* App, const char* path, SDL_Rect transform);
+    /* Wrapper for loading a bitmap image with heap allocation. */
+    Sprite* load_sprite(const Application* App, const char* path, SDL_Rect transform);
 
-/* Free a single sprite from memory */
-int free_sprite(Sprite* sprite_value);
+    /* Free a single sprite from memory */
+    int free_sprite(Sprite* sprite_value);
 
-/* Copy the sprite for rendering */
-void render_sprite(const Application* App, Sprite* sprite);
+    /* Copy the sprite for rendering */
+    void render_sprite(const Application* App, Sprite* sprite);
 
-/* Renders all loaded sprites */
-void render_all(const Application* App);
+    /* Renders all loaded sprites */
+    void render_all(const Application* App);
 
-#ifdef __DEBUG__
-/* Debug function for listing valid sprite pointers */
-void list_loaded_sprites();
+#ifdef __DEBUG
+    /* Debug function for listing valid sprite pointers */
+    void list_loaded_sprites();
 #endif
 
 #ifdef __cplusplus

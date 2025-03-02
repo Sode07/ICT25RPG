@@ -4,8 +4,6 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 
-#define __DEBUG__ // Enable debug functions
-
 typedef struct {
   SDL_Window* Window;
 	SDL_Renderer* Renderer;

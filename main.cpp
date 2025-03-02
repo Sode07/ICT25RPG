@@ -1,4 +1,3 @@
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_render.h>
@@ -12,7 +11,12 @@
 #include "game.h"
 
 #include <thread>
+#include <iostream>
 #include <signal.h>
+
+#ifdef _DEBUG
+#include <mcheck.h>
+#endif
 
 const int wWidth = 720;
 const int wHeight = 640;
@@ -22,7 +26,8 @@ extern SDL_Event CurrentEvent;
 
 float delta_time = 0;
 int next_frame_in = 0;
-volatile bool console_running = true;
+bool console_running = true;
+static std::thread console_thread;
 
 void display_update() // Called for every frame
 {
@@ -38,6 +43,8 @@ void display_update() // Called for every frame
 void cleanup_main(int status)
 {
   console_running = false;
+  std::cin.putback('\n');
+  console_thread.join();
   game_cleanup();
   cleanup_isomap();
   destroy_sprite_queue();
@@ -53,10 +60,14 @@ void handle_sigsegv(int status)
 
 int main(int argc, char **argv)
 {
+#ifdef _DEBUG
+    mtrace();
+#endif
+    
   signal(SIGINT, cleanup_main);
   // signal(SIGSEGV, handle_sigsegv);
 
-  std::thread console_thread(konsoli);
+  console_thread = std::thread(konsoli);
 
   // Initialize components
   if (!(sWindow = init_application(wWidth, wHeight))) return 1;

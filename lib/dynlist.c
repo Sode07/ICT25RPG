@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 
 #include "dynlist.h"
 
@@ -32,7 +33,8 @@ int dyn_pop(DynList* list)
 
 void* dyn_get(DynList* list, size_t index)
 {
-    if (!list || index > list->clen) return NULL;
+    if (!list || index > list->clen)
+	raise(SIGSEGV);
     return list->mem[index];
 }
 
@@ -57,13 +59,16 @@ int dyn_rem(DynList* list, void* ptr)
     return 1;
 }
 
-void dyn_free(DynList* list)
+void dyn_free(DynList** list)
 {
-    for (int i = 0; i < list->clen; i++)
+    if (!list) return;
+    
+    for (int i = 0; i < (*list)->tlen; i++)
     {
-	free(list->mem[i]);
+	free((*list)->mem[i]);
     }
-    free(list);
+    free((*list)->mem);
+    free(*list);
 }
 
 DynList* init_dynlist(size_t len, size_t size)
