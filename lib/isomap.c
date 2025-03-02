@@ -25,7 +25,9 @@ int offsetx = 200;
 int offsety = 100;
 
 float rendering_scale = 2;
-SDL_Texture* tileset_loaded;
+static SDL_Texture* tileset_loaded;
+static SDL_Surface* tileset_surface;
+
 Sprite* cursor_sprite;
 
 map_t loaded_map;
@@ -143,8 +145,8 @@ void draw_debug_cursor() // TODO: Optimisoi tää
 
 int load_tileset(const Application* App)
 {
-    SDL_Surface* tilesurface = SDL_LoadBMP("res/tileset.bmp");
-    tileset_loaded = SDL_CreateTextureFromSurface(App->Renderer, tilesurface);
+    tileset_surface = SDL_LoadBMP("res/tileset.bmp");
+    tileset_loaded = SDL_CreateTextureFromSurface(App->Renderer, tileset_surface);
     return 0;
 }
 
@@ -241,6 +243,7 @@ void draw_tilemap(const Application* App)
 void cleanup_isomap()
 {
   if (cursor_sprite) free_sprite(cursor_sprite);
+  if (tileset_surface) SDL_FreeSurface(tileset_surface);
   if (tileset_loaded) SDL_DestroyTexture(tileset_loaded);
   unload_map();
 }

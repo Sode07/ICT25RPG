@@ -63,9 +63,10 @@ void dyn_free(DynList** list)
 {
     if (!list) return;
     
-    for (int i = 0; i < (*list)->tlen; i++)
+    for (int i = 0; i < (*list)->clen; i++)
     {
-	free((*list)->mem[i]);
+	if ((*list)->mem[i])
+	    free((*list)->mem[i]);
     }
     free((*list)->mem);
     free(*list);
