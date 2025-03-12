@@ -1,6 +1,8 @@
 #ifndef h_isomap_h
 #define h_isomap_h
 
+#include <stdbool.h>
+
 #include "magic.h"
 
 #define CLAMP_MAX(N, MAX) N = N > MAX ? MAX : N
@@ -13,6 +15,14 @@ typedef struct {
   int ix;
   int iy;
 } IsoTransform;
+
+typedef struct {
+  char* name;
+  unsigned int map_w;
+  unsigned int map_h;
+  unsigned int map_d;
+  Uint8*** map;
+} map_t;
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,7 +38,11 @@ void load_cursor_sprite();
 
 int load_map_from_file(const char* mapname);
 
+char* get_current_map_name();
+    
 void cleanup_isomap();
+
+bool get_loaded_map_name(map_t* outMap);
 
 #ifdef __cplusplus
 }

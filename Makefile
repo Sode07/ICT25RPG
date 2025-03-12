@@ -12,6 +12,7 @@ LIBOBJS := \
 	lib/control.o \
 	lib/isomap.o  \
 	lib/console.o \
+	lib/juustoloader.o \
 
 OBJS := \
 	$(MAINOBJ) \

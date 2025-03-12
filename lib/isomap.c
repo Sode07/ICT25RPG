@@ -9,14 +9,7 @@
 
 #include <math.h>
 #include <signal.h>
-
-typedef struct {
-  char* name;
-  unsigned int map_w;
-  unsigned int map_h;
-  unsigned int map_d;
-  Uint8*** map;
-} map_t;
+#include <stdbool.h>
 
 const int tile_width = 32;
 const int tile_height = 32;
@@ -77,7 +70,6 @@ static void unload_map()
     }
     free(loaded_map.map);
 
-    free(loaded_map.name);
     loaded_map.map_w = 0;
     loaded_map.map_h = 0;
     loaded_map.map_d = 0;
@@ -246,4 +238,13 @@ void cleanup_isomap()
   if (tileset_surface) SDL_FreeSurface(tileset_surface);
   if (tileset_loaded) SDL_DestroyTexture(tileset_loaded);
   unload_map();
+}
+
+bool get_loaded_map_name(map_t* outMap)
+{
+    if (!loaded_map.map || !outMap)
+	return false;
+
+    *outMap = loaded_map;
+    return true;    
 }
