@@ -1,13 +1,15 @@
 #ifndef H_JSTLOADER_H
 #define H_JSTLOADER_H
 
+#include <wchar.h>
+
 struct jst_symbol;
 struct jst_section;
 
 union jst_value {
     int jst_int;
     float jst_float;
-    char* jst_char;
+    wchar_t* jst_char;
     struct jst_symbol* jst_symbol;
     struct jst_section* jst_section;
 };
@@ -21,7 +23,7 @@ enum jst_value_type {
 
 typedef struct jst_symbol {
     enum jst_value_type type;
-    char* jst_label;
+    wchar_t* jst_label;
     union jst_value value;
 } jst_symbol;
 
